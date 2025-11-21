@@ -1,0 +1,438 @@
+// ============ Global Styles ============
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #2d3748;
+  background: #f7fafc;
+}
+
+#app {
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ============ Buttons ============
+
+.btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+    cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  outline: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &-secondary {
+    background: #e2e8f0;
+    color: #2d3748;
+
+    &:hover:not(:disabled) {
+      background: #cbd5e0;
+    }
+  }
+
+  &-sm {
+    padding: 8px 16px; // This was already hardcoded, but if it was $spacing-sm, it would be 8px.
+    font-size: 14px;
+  }
+
+  &-block {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// ============ Cards ============
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+
+  &-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a202c;
+    }
+  }
+
+  &-body {
+    padding: 24px;
+  }
+}
+
+// ============ Stat Cards ============
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+    .stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  &.stat-primary .stat-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  &.stat-success .stat-icon {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  }
+
+  &.stat-warning .stat-icon {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  }
+
+  &.stat-info .stat-icon {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  }
+
+  .stat-content {
+    flex: 1;
+
+    h3 {
+      font-size: 14px;
+      color: #718096;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 4px;
+    }
+
+    .stat-change {
+      font-size: 13px;
+      font-weight: 600;
+
+      &.positive {
+        color: #48bb78;
+      }
+
+      &.negative {
+        color: #f56565;
+      }
+    }
+  }
+}
+
+// ============ Badges ============
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  &-user {
+    background: #e2e8f0;
+    color: #2d3748;
+  }
+
+  &-active {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+
+  &-inactive {
+    background: #fed7d7;
+    color: #c53030;
+  }
+}
+
+// ============ Alerts ============
+
+.alert {
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideDown 0.3s ease;
+    
+  &-error {
+    background: #fed7d7;
+    color: #c53030;
+  }
+
+  &-success {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+
+  &-info {
+    background: #bee3f8;
+    color: #2c5282;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============ Forms ============
+
+.form-group {
+  margin-bottom: 24px;
+
+  label {
+    display: block; // This was already hardcoded, but if it was $spacing-sm, it would be 8px.
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2d3748;
+    font-size: 14px;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  svg {
+    position: absolute; // This was already hardcoded, but if it was $gray-400, it would be #a0aec0.
+    left: 16px;
+    color: #a0aec0;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px 16px 14px 48px; // This was already hardcoded, but if it was $border-radius, it would be 10px.
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.2s;
+    outline: none;
+
+    &:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    &:disabled {
+      background: #f7fafc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ============ Toggle Switch ============
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e0;
+    transition: 0.3s;
+    border-radius: 26px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+  }
+
+    input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    &:before {
+      transform: translateX(24px);
+    }
+  }
+}
+
+// ============ Tables ============
+
+.user-table {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px;
+    background: #f7fafc;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 12px;
+    border-top: 1px solid #e2e8f0;
+    color: #2d3748;
+    font-size: 14px;
+  }
+}
+
+// ============ Spinner ============
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============ Animations ============
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============ Scrollbar ============
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+// ============ Responsive Utilities ============
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
