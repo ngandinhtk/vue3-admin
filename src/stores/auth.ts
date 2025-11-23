@@ -103,7 +103,6 @@
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router'; // Import useRouter
 import MockAPI from '../api/mockApi';
 import type { LoginResponse, UserData } from '../types';
 
@@ -111,7 +110,6 @@ import type { LoginResponse, UserData } from '../types';
 
 export const useAuthStore = defineStore('auth', () => {
   // State
-  const router = useRouter(); // Get router instance
   const token = ref<string | null>(null);
   const currentUser = ref<LoginResponse['user'] | null>(null);
   const usersList = ref<UserData[]>([]);
@@ -133,7 +131,6 @@ export const useAuthStore = defineStore('auth', () => {
       // Persist to localStorage
       localStorage.setItem('token', response.token);
       localStorage.setItem('currentUser', JSON.stringify(response.user));
-      router.push({ name: 'Dashboard' }); // Redirect to dashboard
     } catch (error) {
       throw error;
     }
@@ -148,10 +145,9 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    router.push({ name: 'Login' }); // Redirect to login page
   };
 
-  const fetchUsers = async (): Promise<void> => {
+  const fetchUsers = async (): Promise<UserData[]> => {
     try {
       if (!token.value) throw new Error('401');
       
@@ -164,6 +160,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
       throw error;
     }
+    return usersList.value;
   };
 
   const initializeAuth = (): void => {

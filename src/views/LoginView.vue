@@ -91,7 +91,8 @@ const handleLogin = async () => {
 
   try {
     await authStore.login(formData.value.username, formData.value.password);
-    router.push('/dashboard');
+    // Sau khi đăng nhập thành công, chuyển hướng đến Dashboard
+    router.push({ name: 'Dashboard' });
   } catch (err) {
     error.value = 'Invalid username or password';
   } finally {

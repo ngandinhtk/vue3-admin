@@ -1,5 +1,19 @@
 import type { LoginResponse, UserData, SlowData } from '../types/index';
 
+/**
+ * Custom error class for simulating HTTP errors.
+ * This allows for more robust error handling on the client side.
+ */
+export class HttpError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'HttpError';
+    this.status = status;
+  }
+}
+
 // ============ Mock API Service ============
 
 class MockAPI {
@@ -7,41 +21,51 @@ class MockAPI {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Store mock users as a static property for better organization and performance.
+  private static mockUsers: { [key: string]: UserData & { password?: string } } = {
+    admin: { 
+      id: 1, username: 'admin', name: 'Admin User', role: 'Admin', password: 'admin123',
+      email: 'admin@example.com', status: 'Active',
+    },
+    user: { 
+      id: 2, username: 'user', name: 'Regular User', role: 'User', password: 'user123',
+      email: 'user@example.com', status: 'Active'
+    },
+    john_doe: {
+      id: 3, username: 'john_doe', name: 'John Doe', role: 'User', password: 'password',
+      email: 'john@example.com', status: 'Active'
+    },
+    jane_smith: {
+      id: 4, username: 'jane_smith', name: 'Jane Smith', role: 'User', password: 'password',
+      email: 'jane@example.com', status: 'Inactive'
+    }
+  };
+
   /**
    * POST /api/login
    * Authenticate user and return JWT token
    */
   static async login(username: string, password: string): Promise<LoginResponse> {
     await this.delay(800);
-    
-    const mockUsers: { [key: string]: UserData } = {
-      admin: { 
-        id: 1, username: 'admin', name: 'Admin User', role: 'Admin',
-        email: 'admin@example.com', status: 'Active', createdAt: '2024-01-15'
-      },
-      user: { 
-        id: 2, username: 'user', name: 'Regular User', role: 'User',
-        email: 'user@example.com', status: 'Active', createdAt: '2024-02-20'
-      }
-    };
 
-    if ((username === 'admin' && password === 'admin123') || 
-        (username === 'user' && password === 'user123')) {
-      const user = mockUsers[username];
-      if (!user) {
-        // This case should ideally not be reached if username matches keys
-        throw new Error('User not found after successful password match');
-      }
-      // Ensure the returned user object is a fresh copy to prevent accidental mutations
-      // and matches the expected structure for LoginResponse['user']
-      const { password: _, ...userWithoutPassword } = user; // Omit password if it were present
+    const user = this.mockUsers[username];
+
+    if (user && user.password === password) {
       return {
         token: `mock_jwt_token_${user.role}_${Date.now()}`, // Generate a unique token
-        user: userWithoutPassword as LoginResponse['user']
+        user: {
+          id: user.id, 
+          username: user.username,
+          name: user.name,
+          avatar: null,
+          role: user.role
+        },
+          success: true,
+          error: ''
       };
     }
 
-    throw new Error('Invalid credentials');
+    throw new HttpError('Invalid credentials', 401);
   }
 
   /**
@@ -53,47 +77,11 @@ class MockAPI {
 
     // Simulate 401 error for expired/invalid tokens
     if (!token || token.includes('expired')) {
-      throw new Error('401');
+      throw new HttpError('Unauthorized', 401);
     }
 
-    return [
-      {
-        id: 1,
-        username: 'admin',
-        name: 'Admin User',
-        email: 'admin@example.com',
-        role: 'Admin',
-        status: 'Active',
-        createdAt: '2024-01-15'
-      },
-      {
-        id: 2,
-        username: 'user',
-        name: 'Regular User',
-        email: 'user@example.com',
-        role: 'User',
-        status: 'Active',
-        createdAt: '2024-02-20'
-      },
-      {
-        id: 3,
-        username: 'john_doe',
-        name: 'John Doe',
-        email: 'john@example.com',
-        role: 'User',
-        status: 'Active',
-        createdAt: '2024-03-10'
-      },
-      {
-        id: 4,
-        username: 'jane_smith',
-        name: 'Jane Smith',
-        email: 'jane@example.com',
-        role: 'User',
-        status: 'Inactive',
-        createdAt: '2024-04-05'
-      }
-    ];
+    // Return a list of users without their passwords
+    return Object.values(this.mockUsers).map(({ password, ...user }) => user as UserData);
   }
 
   /**
@@ -104,7 +92,7 @@ class MockAPI {
     await this.delay(2000); // 2 second delay
 
     if (!token) {
-      throw new Error('401');
+      throw new HttpError('Unauthorized', 401);
     }
 
     return {

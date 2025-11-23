@@ -21,9 +21,7 @@ export interface UserData {
   email: string;
   role: 'Admin' | 'User';
   status: 'Active' | 'Inactive';
-  createdAt: string;
-  avatar: any;
-  token:string
+
 }
 
 export interface SlowData {

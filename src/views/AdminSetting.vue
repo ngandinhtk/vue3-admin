@@ -84,7 +84,7 @@
             </button>
           </div>
           <div class="card-body">
-            <SkeletonTable v-if="loading && authStore.fetchUsers().length === 0" :rows="4" />
+            <SkeletonTable v-if="loading && authStore.usersList.length === 0" :rows="4" />
             
             <div v-else class="user-table">
               <table>
@@ -98,7 +98,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="user in authStore.users" :key="user.id">
+                  <tr v-for="user in authStore.usersList" :key="user.id">
                     <td>{{ user.username }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
@@ -158,7 +158,7 @@ const loadUsers = async () => {
 };
 
 onMounted(() => {
-  if (authStore.$dispose.length === 0) {
+  if (authStore.usersList.length === 0) {
     loadUsers();
   }
 });
