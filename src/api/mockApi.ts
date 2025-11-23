@@ -71,7 +71,7 @@ class MockAPI {
 
   /**
    * GET /api/users
-   * Fetch list of users (requires authentication)
+   * Fetch list of users 
    */
   static async getUsers(token: string): Promise<UserData[]> {
     await this.delay(600);
@@ -91,7 +91,6 @@ class MockAPI {
     if (!token) {
       throw new HttpError('Unauthorized', 401);
     }
-
     return {
       metrics: {
         revenue: Math.floor(Math.random() * 100000) + 50000,

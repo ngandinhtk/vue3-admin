@@ -19,6 +19,52 @@
         {{ error }}
       </div>
 
+
+         <!-- User Management -->
+        <div class="card">
+          <div class="card-header">
+            <h2>User Management</h2>
+            <button class="btn btn-primary btn-sm" @click="loadUsers" :disabled="loading">
+              <Loader v-if="loading" class="spinner" :size="16" />
+              {{ loading ? 'Loading...' : 'Refresh' }}
+            </button>
+          </div>
+          <div class="card-body">
+            <SkeletonTable v-if="loading && authStore.usersList.length === 0" :rows="4" />
+            
+            <div v-else class="user-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="user in authStore.usersList" :key="user.id">
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                      <span :class="`badge badge-${user.role.toLowerCase()}`">
+                        {{ user.role }}
+                      </span>
+                    </td>
+                    <td>
+                      <span :class="`badge badge-${user.status.toLowerCase()}`">
+                        {{ user.status }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       <div class="settings-grid">
         <!-- System Configuration -->
         <div class="card">
@@ -74,50 +120,7 @@
           </div>
         </div>
 
-        <!-- User Management -->
-        <div class="card">
-          <div class="card-header">
-            <h2>User Management</h2>
-            <button class="btn btn-primary btn-sm" @click="loadUsers" :disabled="loading">
-              <Loader v-if="loading" class="spinner" :size="16" />
-              {{ loading ? 'Loading...' : 'Refresh' }}
-            </button>
-          </div>
-          <div class="card-body">
-            <SkeletonTable v-if="loading && authStore.usersList.length === 0" :rows="4" />
-            
-            <div v-else class="user-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Username</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="user in authStore.usersList" :key="user.id">
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                      <span :class="`badge badge-${user.role.toLowerCase()}`">
-                        {{ user.role }}
-                      </span>
-                    </td>
-                    <td>
-                      <span :class="`badge badge-${user.status.toLowerCase()}`">
-                        {{ user.status }}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+     
       </div>
     </div>
   </MainLayout>
