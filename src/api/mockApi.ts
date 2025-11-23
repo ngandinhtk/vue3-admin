@@ -51,6 +51,7 @@ class MockAPI {
     const user = this.mockUsers[username];
 
     if (user && user.password === password) {
+    
       return {
         token: `mock_jwt_token_${user.role}_${Date.now()}`, // Generate a unique token
         user: {
@@ -60,8 +61,8 @@ class MockAPI {
           avatar: null,
           role: user.role
         },
-          success: true,
-          error: ''
+        success: true,
+        error: ''
       };
     }
 
