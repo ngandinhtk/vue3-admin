@@ -149,8 +149,6 @@
   </MainLayout>
 </template>
 
-<!-- Script and styles in next part -->
- <!-- Thêm vào file DashboardView.vue sau template -->
 
 <script setup lang="ts">
 import { ref } from 'vue';

@@ -1,5 +1,3 @@
-// ============ TypeScript Interfaces ============
-
 export interface LoginResponse {
   token: string;
   user: {

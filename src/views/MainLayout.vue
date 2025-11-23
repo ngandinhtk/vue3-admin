@@ -1,14 +1,16 @@
 <template>
   <div class="app-layout">
+    <!-- Overlay for mobile -->
+    <div v-if="sidebarOpen && isMobile" class="sidebar-overlay" @click="toggleSidebar"></div>
+
     <!-- Sidebar -->
-    <aside :class="['sidebar', { 'open': sidebarOpen }]">
+    <aside :class="['sidebar', { 'open': sidebarOpen, 'closed': !sidebarOpen }]">
       <div class="sidebar-header">
         <div class="logo">
           <LayoutDashboard :size="28" />
           <span v-if="sidebarOpen">Admin Panel</span>
         </div>
       </div>
-
       <nav class="sidebar-nav">
         <button
           :class="['nav-item', { active: isActive('/dashboard') }]"
@@ -67,12 +69,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { 
   LayoutDashboard, Settings, LogOut, Menu, X, User 
 } from 'lucide-vue-next';
+
 
 const router = useRouter();
 const route = useRoute();
@@ -81,10 +84,30 @@ const authStore = useAuthStore();
 const sidebarOpen = ref(true);
 
 const toggleSidebar = () => {
-  sidebarOpen.value = !sidebarOpen.value;
+  // On mobile, always toggle. On desktop, only if not already forced closed.
+  if (window.innerWidth <= 768) {
+    sidebarOpen.value = !sidebarOpen.value;
+  } else {
+    sidebarOpen.value = !sidebarOpen.value;
+  }
+};
+
+const isMobile = computed(() => window.innerWidth <= 768);
+
+const handleResize = () => {
+  if (window.innerWidth > 768) {
+    // On desktop, keep it open unless manually closed
+  } else {
+    // On mobile, default to closed
+    sidebarOpen.value = false;
+  }
 };
 
 const navigate = (path: string) => {
+  if (window.innerWidth <= 768) {
+    sidebarOpen.value = false; // Close sidebar on navigation on mobile
+  }
+  sidebarOpen.value = !sidebarOpen.value;
   router.push(path);
 };
 
@@ -96,6 +119,15 @@ const handleLogout = () => {
   authStore.logout();
   router.push('/login');
 };
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+  handleResize(); // Initial check
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped lang="scss">
@@ -109,13 +141,14 @@ const handleLogout = () => {
 .sidebar {
   background: #1a202c;
   width: 260px;
+  position: relative;
   display: flex;
   flex-direction: column;
   transition: all 0.3s;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 
-  &.closed {
+  &.closed:not(.open) {
     width: 80px;
   }
 }
@@ -251,11 +284,20 @@ const handleLogout = () => {
   padding: 32px;
 }
 
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
 // ============ Responsive ============
 @media (max-width: 1024px) {
-  .sidebar {
-    width: 80px;
-
+  .sidebar.closed {
     .logo span,
     .nav-item span {
       display: none;
@@ -265,16 +307,25 @@ const handleLogout = () => {
 
 @media (max-width: 768px) {
   .sidebar {
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     height: 100vh;
     z-index: 1000;
     transform: translateX(-100%);
+    width: 260px; /* Ensure full width on mobile when open */
 
     &.open {
       transform: translateX(0);
+      .logo span,
+      .nav-item span {
+        display: inline;
+      }
     }
+  }
+
+  .sidebar-overlay {
+    display: block;
   }
 
   .main-content {

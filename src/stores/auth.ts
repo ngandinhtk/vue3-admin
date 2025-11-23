@@ -1,106 +1,3 @@
-// import { defineStore } from 'pinia'
-// import { ref, computed } from 'vue'
-// import { useRouter } from 'vue-router'
-// import type { UserData, LoginResponse } from '../types'
-
-// interface MockUsers {
-//   [key: string]: UserData
-// }
-
-// const MOCK_USERS: MockUsers = {
-//   admin: {
-//     email: 'admin@company.com',
-//     password: 'admin123',
-//     role: 'Admin',
-//     name: 'Admin User',
-//     avatar: '👑',
-//     status: 'Active',
-//     createdAt: '2023-01-01',
-//     id: 1,
-//     username: 'admin',
-//     token: 'admin-token-xyz'
-//   },
-//   user: {
-//     email: 'user@company.com',
-//     password: 'user123',
-//     role: 'User',
-//     name: 'Regular User',
-//     avatar: '👤',
-//     status: 'Active',
-//     createdAt: '2023-01-02',
-//     id: 2,
-//     username: 'user',
-//     token: 'user-token-abc'
-    
-//   }
-// }
-
-// export const useAuthStore = defineStore('auth', () => {
-//   const router = useRouter()
-//   const currentUser = ref<UserData | null>(null)
-
-//   // Load user from localStorage on init
-//   const storedUser = localStorage.getItem('rbac_user')
-//   if (storedUser) {
-//     try {
-//       currentUser.value = JSON.parse(storedUser) as UserData
-//       console.log('✅ User loaded from localStorage:', currentUser.value)
-//     } catch (error) {
-//       console.error('❌ Error parsing stored user:', error)
-//       localStorage.removeItem('rbac_user')
-//     }
-//   }
-
-//   const isAuthenticated = computed<boolean>(() => !!currentUser.value)
-//   const isAdmin = computed<boolean>(() => currentUser.value?.role === 'Admin')
-
-//   function login(email: string, password: string): LoginResponse {
-//     const user = Object.values(MOCK_USERS).find(
-//       (u) => u.email === email && u.password === password
-//     )
-
-//     if (user) {
-//       const userData: UserData = { ...user }
-//       delete (userData as any).password
-//       currentUser.value = userData
-//       localStorage.setItem('rbac_user', JSON.stringify(userData))
-//       router.push('/dashboard')
-//       console.log(user);
-//       return { success: true, token: '', error: '', user: userData }
-      
-//     }
-//     return {  token: '', success: false, error: 'Invalid credentials', user: null! }
-//   }
-//   function fetchUsers(): Omit<UserData, 'password'>[] {
-//     return Object.values(MOCK_USERS).map((user) => {
-//       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//       const { password, ...userWithoutPassword } = user
-//       return userWithoutPassword
-//     })
-//   }
-//   function logout(): void {
-//     currentUser.value = null
-//     localStorage.removeItem('rbac_user')
-//     router.push('/login')
-//   }
-
-//   function hasRole(role: 'Admin' | 'User'): boolean {
-//     return currentUser.value?.role === role
-//   }
-
-//   return {
-//     currentUser,
-//     isAuthenticated,
-//     isAdmin,
-//     login,
-//     fetchUsers,
-//     logout,
-//     hasRole
-//   }
-// })
-
-
-
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import MockAPI from '../api/mockApi';
@@ -163,7 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       // Check for 401 Unauthorized error
       if (error instanceof HttpError && error.status === 401) {
-        logout(router); // Call logout and pass the router to handle redirection
+        logout(router); 
         throw new Error('Session expired. Please log in again.');
       }
       throw error;

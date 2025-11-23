@@ -53,7 +53,7 @@ class MockAPI {
     if (user && user.password === password) {
     
       return {
-        token: `mock_jwt_token_${user.role}_${Date.now()}`, // Generate a unique token
+        token: `mock_jwt_token_${user.role}_${Date.now()}`, 
         user: {
           id: user.id, 
           username: user.username,
@@ -75,13 +75,9 @@ class MockAPI {
    */
   static async getUsers(token: string): Promise<UserData[]> {
     await this.delay(600);
-
-    // Simulate 401 error for expired/invalid tokens
     if (!token || token.includes('expired')) {
       throw new HttpError('Unauthorized', 401);
     }
-
-    // Return a list of users without their passwords
     return Object.values(this.mockUsers).map(({ password, ...user }) => user as UserData);
   }
 
