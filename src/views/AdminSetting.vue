@@ -143,7 +143,7 @@ const loadUsers = async () => {
   error.value = '';
   
   try {
-    await authStore.fetchUsers();
+    await authStore.fetchUsers(router);
   } catch (err) {
     error.value = (err as Error).message;
     

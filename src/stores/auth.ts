@@ -105,6 +105,8 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import MockAPI from '../api/mockApi';
 import type { LoginResponse, UserData } from '../types';
+import type { Router } from 'vue-router';
+import { HttpError } from '../api/mockApi';
 
 // ============ Pinia Auth Store ============
 
@@ -136,27 +138,33 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  const logout = (): void => {
+  const logout = (router?: Router): void => {
     // Clear state
     token.value = null;
     currentUser.value = null;
     usersList.value = [];
-    
+
     // Clear localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
+
+    // Redirect to login page if router is provided
+    if (router) {
+      router.push({ name: 'Login' });
+    }
   };
 
-  const fetchUsers = async (): Promise<UserData[]> => {
+  const fetchUsers = async (router: Router): Promise<UserData[]> => {
     try {
       if (!token.value) throw new Error('401');
-      
+
       const users = await MockAPI.getUsers(token.value);
       usersList.value = users;
     } catch (error) {
-      if ((error as Error).message === '401') {
-        logout();
-        throw new Error('Session expired. Please login again.');
+      // Check for 401 Unauthorized error
+      if (error instanceof HttpError && error.status === 401) {
+        logout(router); // Call logout and pass the router to handle redirection
+        throw new Error('Session expired. Please log in again.');
       }
       throw error;
     }
