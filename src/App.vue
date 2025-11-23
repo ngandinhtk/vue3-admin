@@ -1,13 +1,7 @@
-<script setup lang="ts">
-// import Dashboard from './views/Dashboard.vue';
-import LoginView from './views/LoginView.vue';
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-    Dasshboard Admin - Vue 3 + Vite + TypeScript
-    <LoginView msg="Vite + Vue" />
-  </div>
+  <router-view />
 </template>
 
 <style scoped>
