@@ -1,41 +1,46 @@
-export interface User {
-  email: string
-  password?: string
-  role: 'admin' | 'user'
-  name: string
-  avatar: string
+// ============ TypeScript Interfaces ============
+
+export interface LoginResponse {
+  token: string;
+  user: {
+    id: number;
+    username: string;
+    name: string;
+    avatar: any;
+    role: 'Admin' | 'User';
+  };
+  success: boolean;
+  error: string
 }
 
-export interface LoginCredentials {
-  email: string
-  password: string
+export interface UserData {
+  id: number;
+  username: string;
+  name: string;
+  password: string;
+  email: string;
+  role: 'Admin' | 'User';
+  status: 'Active' | 'Inactive';
+  createdAt: string;
+  avatar: any;
+  token:string
 }
 
-export interface LoginResult {
-  success: boolean
-  error?: string
+export interface SlowData {
+  metrics: {
+    revenue: number;
+    customers: number;
+    growth: number;
+  };
+  timestamp: string;
 }
 
-export interface Stats {
-  totalUsers: number
-  activeUsers: number
-  pendingRequests: number
-  systemHealth: number
+export interface AppState {
+  isLoggedIn: boolean;
+  userRole: 'Admin' | 'User' | null;
+  currentUser: LoginResponse['user'] | null;
+  usersList: UserData[];
+  token: string | null;
 }
 
-export interface Activity {
-  action: string
-  user: string
-  time: string
-  type: 'success' | 'info' | 'warning' | 'danger'
-}
-
-export interface Settings {
-  twoFactorAuth: boolean
-  emailNotifications: boolean
-  apiAccess: boolean
-  auditLogging: boolean
-  sessionTimeout: number
-}
-
-export type StatType = 'primary' | 'success' | 'warning' | 'info'
+export type UserRole = 'Admin' | 'User';

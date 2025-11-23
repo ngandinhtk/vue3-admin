@@ -1,47 +1,65 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { createRouter, createWebHistory } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/LoginView.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/Dashboard.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/settings', // This route requires admin privileges
+    name: 'AdminSettings',
+    component: () => import('../views/AdminSetting.vue'),
+    meta: { 
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
+  {
+    path: '/', // Redirect root to dashboard
+    redirect: { name: 'Dashboard' }
+  },
+  {
+    path: '/:pathMatch(.*)*', // Catch-all for unknown routes
+    redirect: { name: 'Dashboard' }
+  }
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue'),
-      meta: { requiresGuest: true }
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('../views/Dashboard.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/admin/settings',
-      name: 'admin-settings',
-      component: () => import('../views/AdminSetting.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true }
-    },
-    {
-      path: '/',
-      redirect: '/login'
-    }
-  ]
-})
+  history: createWebHistory(),
+  routes
+});
 
-// Navigation Guard
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
-  
-  if (to.meta.requiresAuth && !authStore.currentUser) {
-    next('/login')
-  } else if (to.meta.requiresGuest && authStore.currentUser) {
-    next('/dashboard')
-  } else if (to.meta.requiresAdmin && authStore.currentUser?.role !== 'admin') {
-    next('/dashboard')
-  } else {
-    next()
-  }
-})
+  const authStore = useAuthStore();
+  const requiresAuth = to.meta.requiresAuth;
+  const requiresAdmin = to.meta.requiresAdmin;
 
-export default router
+  if (requiresAuth && !authStore.isLoggedIn) {
+    next({ name: 'Login' }); // Redirect to login if auth required but not logged in
+    return;
+  }
+
+  if (requiresAdmin && authStore.userRole !== 'Admin') {
+    next({ name: 'Dashboard' }); // Redirect to dashboard if admin required but not admin
+    return;
+  }
+
+  if (to.path === '/login' && authStore.isLoggedIn) {
+    next({ name: 'Dashboard' }); // If logged in, prevent access to login page
+    return;
+  }
+
+  next(); // Continue to the route
+});
+
+export default router;
